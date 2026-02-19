@@ -63,12 +63,12 @@
                     <span class="font-medium">Dashboard</span>
                 </a>
                 <a href="/index.html" class="sidebar-link flex items-center gap-3 px-5 py-3 text-gray-300 hover:bg-white/5 rounded-2xl mb-1">
-                    <i class="fa-solid fa-database w-5"></i>
-                    <span class="font-medium">Index</span>
+                    <i class="fa-solid fa-home w-5"></i>
+                    <span class="font-medium">Home</span>
                 </a>
                 <a href="/pages/upload.html" class="sidebar-link flex items-center gap-3 px-5 py-3 text-gray-300 hover:bg-white/5 rounded-2xl mb-1">
                     <i class="fa-solid fa-upload w-5"></i>
-                    <span class="font-medium">Uploads</span>
+                    <span class="font-medium">Upload</span>
                 </a>
                 <a href="/pages/history.html" class="sidebar-link flex items-center gap-3 px-5 py-3 text-gray-300 hover:bg-white/5 rounded-2xl mb-1">
                     <i class="fa-solid fa-clock-rotate-left w-5"></i>
@@ -115,7 +115,7 @@
                     <div class="flex items-center justify-between mb-8">
                         <div>
                             <h1 class="text-4xl font-semibold">Dashboard</h1>
-                            <p class="text-gray-400">Overview as of Feb 14, 2026 • Live</p>
+                            <p id="dashboardOverviewSub" class="text-gray-400">Overview • Live</p>
                         </div>
                         <div class="flex items-center gap-3 text-sm">
                             <div class="bg-emerald-500/10 text-emerald-400 px-4 py-2 rounded-3xl flex items-center gap-2">
@@ -350,17 +350,17 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div class="p-8 bg-[#0f1117] rounded-2xl">
                                 <div class="text-gray-400 text-sm mb-3">Total Indexed Records</div>
-                                <div class="text-5xl font-bold mt-2" id="indexTotalRecords">14,872</div>
+                                <div class="text-5xl font-bold mt-2" id="indexTotalRecords">0</div>
                                 <div class="text-xs text-gray-500 mt-3">Live from database</div>
                             </div>
                             <div class="p-8 bg-[#0f1117] rounded-2xl">
                                 <div class="text-gray-400 text-sm mb-3">Vectors / Embeddings</div>
-                                <div class="text-5xl font-bold mt-2" id="indexVectors">≈ 1.2M</div>
+                                <div class="text-5xl font-bold mt-2" id="indexVectors">0</div>
                                 <div class="text-xs text-gray-500 mt-3">ML embeddings stored</div>
                             </div>
                             <div class="p-8 bg-[#0f1117] rounded-2xl">
                                 <div class="text-gray-400 text-sm mb-3">Average Similarity Score</div>
-                                <div class="text-5xl font-bold mt-2" id="indexSimilarity">0.914</div>
+                                <div class="text-5xl font-bold mt-2" id="indexSimilarity">0.000</div>
                                 <div class="text-xs text-gray-500 mt-3">Across all clusters</div>
                             </div>
                         </div>
@@ -391,13 +391,9 @@
                                     <th class="text-left py-6 px-8 font-normal text-gray-400">Status</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-800">
+                            <tbody id="dashboardHistoryRows" class="divide-y divide-gray-800">
                                 <tr>
-                                    <td class="py-6 px-8 text-sm">Feb 13, 2026</td>
-                                    <td class="py-6 px-8 text-sm font-medium">Q4 2026 Campaign Master</td>
-                                    <td class="py-6 px-8 text-sm">4,892</td>
-                                    <td class="py-6 px-8 text-rose-400 text-sm">387</td>
-                                    <td class="py-6 px-8"><span class="bg-emerald-400/10 text-emerald-400 px-4 py-1 rounded-full text-xs">Merged</span></td>
+                                    <td colspan="5" class="py-6 px-8 text-sm text-gray-400">Loading...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -673,6 +669,7 @@
                         </div>
                     </div>
                 </div>
+                <footer class="mt-12"></footer>
             </div>
         </div>
     </div>
@@ -733,31 +730,47 @@
             }
         }
 
-        // Fake actions (kept from original)
-        function checkDuplicate() {
-            const title = document.getElementById('quickTitle')?.value;
-            if (!title) return alert("Enter a title first");
-            alert(`✅ No duplicates found for "${title}"`);
+        async function checkDuplicate() {
+            const title = document.getElementById('quickTitle')?.value?.trim();
+            if (!title) {
+                showNotification('Enter a title first');
+                return;
+            }
+            try {
+                const response = await fetch('/api/check-duplicate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.detail || 'Check failed');
+                if (data.duplicate) {
+                    showNotification(`Duplicate found (score ${data.score})`);
+                } else {
+                    showNotification('Unique title');
+                }
+            } catch (error) {
+                showNotification(error.message || 'Check failed');
+            }
         }
         function uploadExcel() {
-            alert("📤 File uploaded! Redirecting to Uploads page...");
-            switchPage(1);
+            window.location.href = '/pages/upload.html';
         }
         function viewAllSubmissions() {
-            alert("📋 Opening full submission history...");
-            switchPage(2);
+            window.location.href = '/pages/history.html';
         }
         function reviewCluster() {
-            alert("🔍 Opening cluster review for Project Alpha");
+            window.location.href = '/pages/history.html#review';
         }
-        function retryWorkflow() {
-            alert("🔄 Workflow restarted successfully");
+        async function retryWorkflow() {
+            await loadDashboardData();
+            showNotification('Dashboard data refreshed');
         }
         function fakeUpload() {
             window.location.href = '/pages/upload.html';
         }
         function exportData() {
-            alert("📥 Clean export downloaded (clearoid_export_feb14.xlsx)");
+            window.location.href = '/pages/export.html?type=all';
         }
         function createNewProject() {
             const projectName = prompt('Enter project name:');
@@ -792,7 +805,7 @@
         }
 
         function viewProject(name) {
-            alert(`Opening project: ${name}\n\nFeatures:\n• View all titles\n• Manage duplicates\n• Export data\n• Team collaboration`);
+            window.location.href = `/pages/history.html?search=${encodeURIComponent(name)}`;
         }
 
         function deleteProject(btn) {
@@ -897,20 +910,23 @@
                 document.getElementById('activeClusters').textContent = data.clusters || 0;
                 
                 // Update Index page stats with formatted values
-                const totalRecords = data.total || 14872;
+                const totalRecords = Number(data.total || 0);
                 document.getElementById('indexTotalRecords').textContent = totalRecords.toLocaleString();
                 
                 const vectorCount = totalRecords * 384; // Typical embedding dimension
                 const vectorDisplay = vectorCount > 1000000 ? `≈ ${(vectorCount / 1000000).toFixed(1)}M` : vectorCount.toLocaleString();
                 document.getElementById('indexVectors').textContent = vectorDisplay;
                 
-                const avgSimilarity = data.clusters > 0 && data.duplicates > 0 ? (0.85 + Math.random() * 0.1).toFixed(3) : '0.914';
+                const avgSimilarity = data.total > 0
+                    ? (1 - (Number(data.duplicates || 0) / Number(data.total))).toFixed(3)
+                    : '0.000';
                 document.getElementById('indexSimilarity').textContent = avgSimilarity;
                 
                 // Update Reports page stats
                 document.getElementById('reportTotalRecords').textContent = totalRecords.toLocaleString();
                 document.getElementById('reportDuplicates').textContent = (data.duplicates || 0).toLocaleString();
-                document.getElementById('reportProjects').textContent = document.getElementById('projectsList')?.children.length || 0;
+                const projectCards = document.querySelectorAll('#projectsList > .bg-gray-900.border');
+                document.getElementById('reportProjects').textContent = projectCards.length;
                 document.getElementById('reportSimilarity').textContent = avgSimilarity;
                 
                 const uniquePercent = data.total > 0 ? ((data.unique / data.total) * 100).toFixed(1) : 0;
@@ -921,12 +937,43 @@
                 
                 const avgCluster = data.clusters > 0 ? (data.duplicates / data.clusters).toFixed(1) : 0;
                 document.getElementById('avgCluster').textContent = `Avg ${avgCluster} records`;
+                document.getElementById('totalChange').textContent = `Updated ${new Date().toLocaleTimeString()}`;
+                document.getElementById('dashboardOverviewSub').textContent = `Overview as of ${new Date().toLocaleDateString()} • Live`;
                 
                 // Load bulk upload stats
                 const bulkResponse = await fetch('/admin/stats');
                 const bulkData = await bulkResponse.json();
                 document.getElementById('bulkUploads').textContent = bulkData.total_uploads || 0;
                 document.getElementById('uploadStatus').textContent = bulkData.total_uploads > 0 ? `${bulkData.total_uploads} files` : 'Ready';
+
+                // Populate dashboard history preview table with real recent entries.
+                const historyResponse = await fetch('/api/history');
+                const historyData = await historyResponse.json();
+                const historyRows = (historyData.data || []).slice(0, 5);
+                const tbody = document.getElementById('dashboardHistoryRows');
+                if (tbody) {
+                    if (historyRows.length === 0) {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="5" class="py-6 px-8 text-sm text-gray-400">No submissions yet</td>
+                            </tr>
+                        `;
+                    } else {
+                        tbody.innerHTML = historyRows.map((row) => `
+                            <tr>
+                                <td class="py-6 px-8 text-sm">${new Date(row.created_at).toLocaleDateString()}</td>
+                                <td class="py-6 px-8 text-sm font-medium">${row.title || ''}</td>
+                                <td class="py-6 px-8 text-sm">1</td>
+                                <td class="py-6 px-8 text-sm ${row.status === 'duplicate' ? 'text-rose-400' : 'text-emerald-400'}">${row.status === 'duplicate' ? '1' : '0'}</td>
+                                <td class="py-6 px-8">
+                                    <span class="${row.status === 'duplicate' ? 'bg-rose-400/10 text-rose-400' : 'bg-emerald-400/10 text-emerald-400'} px-4 py-1 rounded-full text-xs">
+                                        ${row.status === 'duplicate' ? 'Duplicate' : 'Unique'}
+                                    </span>
+                                </td>
+                            </tr>
+                        `).join('');
+                    }
+                }
                 
             } catch (error) {
                 console.error('Error loading dashboard data:', error);
@@ -967,5 +1014,6 @@
             console.log("%cClearoid Dashboard loaded", "color:#3b82f6; font-family:monospace");
         };
     </script>
+    <script src="/assets/js/site-chrome.js"></script>
 </body>
 </html>

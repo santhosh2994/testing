@@ -8,6 +8,7 @@ load_dotenv(BASE_DIR / ".env")
 import os
 import logging
 from typing import List
+from threading import Lock
 
 import numpy as np
 from sentence_transformers import SentenceTransformer
@@ -26,15 +27,19 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 # ==========================================================
 
 _minilm_model = None
+_model_lock = Lock()
 
 def get_minilm_model():
     global _minilm_model
 
     if _minilm_model is None:
-        _minilm_model = SentenceTransformer(
-            "all-MiniLM-L6-v2",
-            device="cpu"
-        )
+        # Guarded lazy init prevents duplicate model loads on concurrent first requests.
+        with _model_lock:
+            if _minilm_model is None:
+                _minilm_model = SentenceTransformer(
+                    "all-MiniLM-L6-v2",
+                    device="cpu"
+                )
 
     return _minilm_model
 

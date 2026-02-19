@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 
 from database.connection import get_db
-from database.models import Title
+from database.models import Title, BulkUploadRun
 
 router = APIRouter()
 
@@ -40,10 +40,19 @@ def stats(db: Session = Depends(get_db)):
         .all()
     )
 
+    total_uploads = db.query(func.count(BulkUploadRun.id)).scalar() or 0
+    total_processed = db.query(func.coalesce(func.sum(BulkUploadRun.processed), 0)).scalar() or 0
+    total_saved = db.query(func.coalesce(func.sum(BulkUploadRun.saved), 0)).scalar() or 0
+    total_upload_duplicates = db.query(func.coalesce(func.sum(BulkUploadRun.duplicates), 0)).scalar() or 0
+
     return {
         "total": total,
         "duplicates": dup_count,
         "unique": unique,
+        "total_uploads": total_uploads,
+        "total_processed": int(total_processed),
+        "total_saved": int(total_saved),
+        "total_upload_duplicates": int(total_upload_duplicates),
         "avg_title_length": float(avg_len),
         "top_normalized": [
             {"normalized": n, "count": c}

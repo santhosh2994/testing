@@ -212,6 +212,7 @@
       </a>
       <div class="flex items-center gap-6">
         <a href="/index.html" class="text-white hover:text-gray-300 transition">Home</a>
+        <a href="/pages/dashboard.html" class="text-white hover:text-gray-300 transition">Dashboard</a>
         <a href="/pages/upload.html" class="text-white hover:text-gray-300 transition">Upload</a>
         <a href="/pages/history.html" class="text-white hover:text-gray-300 transition">History</a>
         <a href="/pages/export.html" class="text-white hover:text-gray-300 transition">Export</a>
@@ -359,53 +360,7 @@
     </div>
   </main>
 
-  <!-- FOOTER -->
-  <footer class="bg-black text-gray-400 pt-12 pb-10">
-    <div class="max-w-7xl mx-auto px-6 lg:px-8">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
-        <div>
-          <h3 class="text-white font-bold text-lg tracking-wider mb-5 uppercase">Product</h3>
-          <ul class="space-y-3 text-base">
-            <li><a href="/index.html" class="hover:text-white transition">Home</a></li>
-            <li><a href="/pages/upload.html" class="hover:text-white transition">Upload</a></li>
-            <li><a href="/pages/history.html" class="hover:text-white transition">History</a></li>
-            <li><a href="/pages/export.html" class="hover:text-white transition">Export</a></li>
-          </ul>
-        </div>
-        <div>
-          <h3 class="text-white font-bold text-lg tracking-wider mb-5 uppercase">Company</h3>
-          <ul class="space-y-3 text-base">
-            <li><a href="#" class="hover:text-white transition">Contact us</a></li>
-            <li><a href="#" class="hover:text-white transition">Feedback</a></li>
-          </ul>
-        </div>
-        <div>
-          <h3 class="text-white font-bold text-lg tracking-wider mb-5 uppercase">Social</h3>
-          <div class="flex gap-8 items-center text-4xl">
-            <a href="#" class="hover:text-white transition duration-200">𝕏</a>
-            <a href="#" class="hover:text-white transition duration-200">LinkedIn</a>
-            <a href="#" class="text-xl font-medium hover:text-white transition duration-200 flex items-center gap-3">
-              <span>Share</span>
-              <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M15 8a3 3 0 10-2.83 2.83L4 14.24V5.76l8.17 3.41A3 3 0 0015 8z" />
-              </svg>
-            </a>
-          </div>
-        </div>
-      </div>
-      <div class="border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center text-sm gap-6">
-        <select class="bg-gray-900 border border-gray-700 rounded-full px-5 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-          <option>English</option>
-          <option>हिन्दी</option>
-          <option>Español</option>
-        </select>
-        <div class="flex items-center gap-6">
-          <p>© 2026 Clearoid</p>
-          <a href="https://github.com/yourusername/clearoid" target="_blank" class="hover:text-white transition">GitHub</a>
-        </div>
-      </div>
-    </div>
-  </footer>
+  <footer></footer>
 
   <!-- AUTH MODAL -->
   <div id="authModal" class="modal-overlay" onclick="closeModal(event)">
@@ -479,6 +434,22 @@
     // Initial load
     loadHistoryData();
     setInterval(loadHistoryData, 30000); // Auto-refresh every 30 seconds
+
+    // Deep-link support from dashboard actions.
+    window.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const searchValue = params.get('search');
+      if (searchValue) {
+        const searchEl = document.getElementById('search');
+        if (searchEl) {
+          searchEl.value = searchValue;
+          applyUIState();
+        }
+      }
+      if (window.location.hash === '#review') {
+        showReview();
+      }
+    });
 
     function applyUIState() {
       const q = document.getElementById("search")?.value.toLowerCase() || "";
@@ -564,11 +535,11 @@
 
     // Export
     function exportUnique() {
-      window.location.href = "/export.html?type=unique";
+      window.location.href = "/pages/export.html?type=unique";
     }
 
     function exportAll() {
-      window.location.href = "/export.html?type=all";
+      window.location.href = "/pages/export.html?type=all";
     }
 
     function exportSelected() {
@@ -577,11 +548,11 @@
         alert("Please select at least one item to export.");
         return;
       }
-      window.location.href = `/export.html?type=selected&ids=${selected.join(',')}`;
+      window.location.href = `/pages/export.html?type=selected&ids=${selected.join(',')}`;
     }
 
     // Delete
-    function deleteSelected() {
+    async function deleteSelected() {
       const selected = getSelectedIds();
       if (selected.length === 0) {
         alert("Please select at least one item to delete.");
@@ -589,29 +560,69 @@
       }
       if (!confirm(`Delete ${selected.length} selected item(s)? This cannot be undone.`)) return;
 
-      rawData = rawData.filter(r => !selected.includes(r.id));
-      disableSelectMode();
-      applyUIState();
-      alert(`${selected.length} item(s) deleted.`);
+      try {
+        const res = await fetch(`/api/titles?ids=${selected.join(',')}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Delete failed');
+        disableSelectMode();
+        await loadHistoryData();
+        alert(`${data.deleted} item(s) deleted.`);
+      } catch (err) {
+        alert(err.message || 'Delete failed');
+      }
     }
 
-    function deleteAllCurrent() {
+    async function deleteAllCurrent() {
       const count = rawData.filter(r => filter === "all" || r.status === filter).length;
       if (count === 0 || !confirm(`Delete all ${filter === 'all' ? 'entries' : filter + ' entries'} (${count})?`)) return;
 
-      rawData = rawData.filter(r => !(filter === "all" || r.status === filter));
-      applyUIState();
-      alert("All matching items deleted.");
+      try {
+        const scope = filter === 'all' ? 'all' : filter;
+        const res = await fetch(`/api/titles?scope=${scope}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Delete failed');
+        await loadHistoryData();
+        alert(`${data.deleted} item(s) deleted.`);
+      } catch (err) {
+        alert(err.message || 'Delete failed');
+      }
     }
 
-    function deleteRow(id) {
+    async function deleteRow(id) {
       if (!confirm("Delete this entry?")) return;
-      rawData = rawData.filter(r => r.id !== id);
-      applyUIState();
+      try {
+        const res = await fetch(`/api/titles/${id}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Delete failed');
+        await loadHistoryData();
+      } catch (err) {
+        alert(err.message || 'Delete failed');
+      }
     }
 
-    function editRow(id) {
-      alert(`Edit feature for ID ${id} coming soon!`);
+    async function editRow(id) {
+      const row = rawData.find(r => r.id === id);
+      const current = row?.title || '';
+      const next = prompt("Edit title", current);
+      if (next === null) return;
+      const value = next.trim();
+      if (!value) {
+        alert("Title cannot be empty.");
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/titles/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title: value })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Update failed');
+        await loadHistoryData();
+      } catch (err) {
+        alert(err.message || 'Update failed');
+      }
     }
 
     // Cluster View Rendering
@@ -737,5 +748,6 @@
       document.getElementById('deleteOptions').classList.toggle('show');
     });
   </script>
+  <script src="/assets/js/site-chrome.js"></script>
 </body>
 </html>

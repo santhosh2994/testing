@@ -3,7 +3,13 @@
 echo "🚀 Starting Clearoid Server..."
 echo ""
 
-cd /Users/santhoshkumar/Downloads/Testing-files--main
+cd "$(dirname "$0")"
+
+if [ ! -d "venv" ]; then
+    echo "❌ Virtual environment not found!"
+    echo "Run: python3 -m venv venv && source venv/bin/activate && pip install -r backend/requirements.txt"
+    exit 1
+fi
 
 # Activate virtual environment
 source venv/bin/activate

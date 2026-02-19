@@ -1,12 +1,13 @@
-from fastapi import FastAPI, Request
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import JSONResponse, RedirectResponse
-from dotenv import load_dotenv
-import os
 import logging
+import os
 import sys
 from pathlib import Path
+
+from dotenv import load_dotenv
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -25,9 +26,6 @@ logger = logging.getLogger("clearoid")
 from database.connection import Base, engine
 from database.models import Title, BulkUploadRun
 
-# Create tables
-Base.metadata.create_all(bind=engine)
-
 # Create temp directory for uploads
 temp_dir = Path(__file__).parent.parent / "temp" / "uploads"
 temp_dir.mkdir(parents=True, exist_ok=True)
@@ -37,6 +35,9 @@ from backend.routes.title_routes import router as title_router
 from backend.routes.excel_routes import router as excel_router
 from backend.routes.admin_routes import router as admin_router
 from backend.routes.auth_routes import router as auth_router
+
+# Ensure all model metadata (including auth User) is registered before table creation.
+Base.metadata.create_all(bind=engine)
 
 # FastAPI app
 app = FastAPI(
@@ -77,6 +78,11 @@ app.include_router(title_router)
 app.include_router(excel_router)
 app.include_router(admin_router, prefix="/admin", tags=["Admin"])
 app.include_router(auth_router)
+
+# Root redirect
+@app.get("/")
+async def root():
+    return RedirectResponse(url="/index.html")
 
 # Frontend static files
 frontend_path = Path(__file__).parent.parent / "frontend"

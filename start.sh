@@ -1,19 +1,6 @@
 #!/bin/bash
 
-echo "🎉 Clearoid - Complete Setup & Start"
-echo "===================================="
-echo ""
-
-cd /Users/santhoshkumar/Downloads/Testing-files--main
-
-echo "✅ All systems ready!"
-echo ""
-echo "📊 Database: 16 titles loaded"
-echo "🔐 Authentication: Enabled"
-echo "📤 File Upload: Working (.xlsx, .xls)"
-echo "🤖 ML Detection: Active"
-echo ""
-echo "🚀 Starting server..."
+echo "🚀 Starting Clearoid Server..."
 echo ""
 
 cd backend

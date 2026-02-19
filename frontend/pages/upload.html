@@ -292,6 +292,7 @@
       </a>
       <div class="flex items-center gap-6">
         <a href="/index.html" class="text-white hover:text-gray-300 transition">Home</a>
+        <a href="/pages/dashboard.html" class="text-white hover:text-gray-300 transition">Dashboard</a>
         <a href="/pages/upload.html" class="text-white hover:text-gray-300 transition">Upload</a>
         <a href="/pages/history.html" class="text-white hover:text-gray-300 transition">History</a>
         <a href="/pages/export.html" class="text-white hover:text-gray-300 transition">Export</a>
@@ -434,102 +435,7 @@
     </div>
   </main>
 
-  <!-- COMPACT FOOTER -->
-  <footer class="bg-black text-gray-400 pt-12 pb-10">
-    <div class="max-w-7xl mx-auto px-6 lg:px-8">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
-        <div>
-          <h3 class="text-white font-bold text-lg tracking-wider mb-5 uppercase">PRODUCT</h3>
-          <ul class="space-y-3 text-base">
-            <li><a href="/index.html" class="hover:text-white transition">Home</a></li>
-            <li><a href="/pages/upload.html" class="hover:text-white transition">Upload</a></li>
-            <li><a href="/pages/history.html" class="hover:text-white transition">History</a></li>
-            <li><a href="/pages/export.html" class="hover:text-white transition">Export</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h3 class="text-white font-bold text-lg tracking-wider mb-5 uppercase">COMPANY</h3>
-          <h4 class="text-white font-semibold text-base mb-4">About us</h4>
-          <ul class="space-y-3 text-base">
-            <li><a href="#" class="hover:text-white transition">Contact us</a></li>
-            <li><a href="mailto:feedback@clearoid.com" class="hover:text-white transition">Feedback</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h3 class="text-white font-bold text-lg tracking-wider mb-5 uppercase">SOCIAL</h3>
-          <div class="flex gap-8 items-center text-4xl justify-center md:justify-start">
-            <a href="#" class="hover:text-white transition duration-200">𝕏</a>
-            <a href="#" class="hover:text-white transition duration-200">LinkedIn</a>
-            <a href="#" class="text-xl font-medium hover:text-white transition duration-200 flex items-center gap-3">
-              <span>Share</span>
-              <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M15 8a3 3 0 10-2.83 2.83L4 14.24V5.76l8.17 3.41A3 3 0 0015 8z" />
-              </svg>
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div class="border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center text-sm gap-6">
-        <select class="bg-gray-900 border border-gray-700 rounded-full px-5 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[140px]">
-          <option>English</option>
-          <option>हिन्दी</option>
-          <option>Español</option>
-        </select>
-
-        <div class="flex items-center gap-6">
-          <p>© 2026 Clearoid</p>
-          <a href="https://github.com/yourusername/clearoid" target="_blank" class="hover:text-white transition">GitHub</a>
-        </div>
-      </div>
-    </div>
-  </footer>
-
-  <!-- SIGN IN / SIGN UP MODAL -->
-
-      <p class="text-gray-400 text-center mb-10" id="modalSubtitle">Get access to your account</p>
-
-      <form class="space-y-6">
-        <div class="relative">
-          <input type="email" id="email" placeholder=" " class="w-full px-6 py-5 text-lg bg-transparent border border-gray-700 rounded-xl focus:outline-none focus:border-[#007aff] focus:ring-2 focus:ring-[#007aff]/30 transition peer" />
-          <label for="email" class="absolute left-6 top-5 text-gray-400 text-lg pointer-events-none transition-all peer-focus:top-2 peer-focus:text-sm peer-focus:text-[#007aff] peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-sm peer-not-placeholder-shown:text-[#007aff]">Email</label>
-        </div>
-
-        <div class="relative">
-          <input type="password" id="password" placeholder=" " class="w-full px-6 py-5 text-lg bg-transparent border border-gray-700 rounded-xl focus:outline-none focus:border-[#007aff] focus:ring-2 focus:ring-[#007aff]/30 transition peer" />
-          <label for="password" class="absolute left-6 top-5 text-gray-400 text-lg pointer-events-none transition-all peer-focus:top-2 peer-focus:text-sm peer-focus:text-[#007aff] peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-sm peer-not-placeholder-shown:text-[#007aff]">Password</label>
-        </div>
-
-        <button type="submit" class="w-full bg-[#007aff] text-white font-medium py-5 rounded-full hover:bg-[#0066cc] transition shadow-lg text-lg">
-          Sign in
-        </button>
-      </form>
-
-      <div class="relative my-8">
-        <div class="absolute inset-0 flex items-center">
-          <div class="w-full border-t border-gray-700"></div>
-        </div>
-        <div class="relative flex justify-center text-sm">
-          <span class="px-4 bg-gray-900/60 text-gray-400">or</span>
-        </div>
-      </div>
-
-      <div class="space-y-4">
-        <button class="w-full bg-gray-800 hover:bg-gray-700 text-white font-medium py-5 rounded-full transition flex items-center justify-center gap-3 text-lg border border-gray-700">
-          <span class="text-xl">G</span> Continue with Google
-        </button>
-        <button class="w-full bg-black text-white font-medium py-5 rounded-full hover:bg-gray-900 transition text-lg shadow-lg">
-          <span class="text-xl">𝕏</span> Continue with X
-        </button>
-      </div>
-
-      <p class="text-center text-gray-500 mt-10 text-sm">
-        Don't have an account? <button type="button" onclick="switchModal('signup')" class="text-[#007aff] hover:underline font-medium">Sign up</button>
-      </p>
-    </div>
-  </div>
+  <footer></footer>
 
   <!-- Script -->
   <script>
@@ -621,6 +527,10 @@
 
       processing.classList.remove('hidden');
       result.classList.add('hidden');
+      result.classList.remove('bg-red-50', 'dark:bg-red-900/20', 'border-red-200', 'dark:border-red-800');
+      result.classList.add('bg-green-50', 'dark:bg-green-900/20', 'border-green-200', 'dark:border-green-800');
+      resultText.classList.remove('text-red-800', 'dark:text-red-400');
+      resultText.classList.add('text-green-800', 'dark:text-green-400');
 
       const formData = new FormData();
       formData.append('file', file);
@@ -637,11 +547,19 @@
         result.classList.remove('hidden');
 
         const fileName = data.filename || file.name;
-        resultText.innerHTML = `
-          <strong>Upload successful!</strong><br>
-          File: ${fileName}<br>
-          Processing in background
-        `;
+        if (data.status === 'already_processed') {
+          resultText.innerHTML = `
+            <strong>Already processed earlier</strong><br>
+            File: ${fileName}<br>
+            Processed: ${data.processed}, Saved: ${data.saved}, Duplicates: ${data.duplicates}
+          `;
+        } else {
+          resultText.innerHTML = `
+            <strong>Upload successful!</strong><br>
+            File: ${fileName}<br>
+            Processing in background
+          `;
+        }
 
         window.uploadedFileName = fileName;
       } catch (err) {
@@ -697,33 +615,31 @@
       closePreviewPanel();
     }
 
-    function loadPreviewData() {
-      previewData = [
-        { row: 80, data: 'melon', status: 'duplicate' },
-        { row: 81, data: 'grape', status: 'duplicate' },
-        { row: 82, data: 'kiwi', status: 'duplicate' },
-        { row: 83, data: 'apple', status: 'duplicate' },
-        { row: 84, data: 'banana', status: 'duplicate' },
-        { row: 85, data: 'orange', status: 'duplicate' },
-        { row: 86, data: 'mango', status: 'duplicate' },
-        { row: 87, data: 'melon', status: 'duplicate' },
-        { row: 88, data: 'grape', status: 'duplicate' },
-        { row: 89, data: 'kiwi', status: 'duplicate' },
-        { row: 90, data: 'apple', status: 'duplicate' },
-        { row: 91, data: 'banana', status: 'duplicate' },
-        { row: 92, data: 'orange', status: 'duplicate' },
-        { row: 93, data: 'mango', status: 'duplicate' }
-      ];
+    async function loadPreviewData() {
+      try {
+        const response = await fetch('/api/history');
+        const result = await response.json();
+        const rows = (result.data || []).slice(0, 200);
 
-      gridData = [
-        ['Row', 'Fruit', 'Color', 'Status'],
-        [80, 'melon', 'green', 'duplicate'],
-        [81, 'grape', 'purple', 'duplicate'],
-        [82, 'kiwi', 'brown', 'duplicate'],
-        [83, 'apple', 'red', 'duplicate'],
-        [84, 'banana', 'yellow', 'duplicate'],
-        [85, 'orange', 'orange', 'duplicate']
-      ];
+        previewData = rows.map((item, idx) => ({
+          row: item.id || idx + 1,
+          data: item.title || item.normalized || '',
+          status: item.status || 'unique'
+        }));
+
+        gridData = [
+          ['ID', 'Title', 'Normalized', 'Status'],
+          ...rows.map((item, idx) => [
+            item.id || idx + 1,
+            item.title || '',
+            item.normalized || '',
+            item.status || 'unique'
+          ])
+        ];
+      } catch (error) {
+        previewData = [];
+        gridData = [['ID', 'Title', 'Normalized', 'Status']];
+      }
 
       renderPreviewTable(previewData);
       renderGridTable(gridData);
@@ -834,34 +750,8 @@
       }
     }
 
-    // Modal Functions
-    function openModal(mode) {
-      const modal = document.getElementById('authModal');
-      const title = document.getElementById('modalTitle');
-      const subtitle = document.getElementById('modalSubtitle');
-      if (mode === 'signup') {
-        title.textContent = 'Create your account';
-        subtitle.textContent = 'Get started with Clearoid';
-      } else {
-        title.textContent = 'Sign in';
-        subtitle.textContent = 'Get access to your account';
-      }
-      modal.classList.add('show');
-    }
-
-    function closeModal(event) {
-      const modal = document.getElementById('authModal');
-      if (event.target === modal || event.target.classList.contains('close-btn')) {
-        modal.classList.remove('show');
-      }
-    }
-
-    function switchModal(mode) {
-      const modal = document.getElementById('authModal');
-      modal.classList.remove('show');
-      setTimeout(() => openModal(mode), 300);
-    }
   </script>
+  <script src="/assets/js/site-chrome.js"></script>
 </body>
 
 </html>
